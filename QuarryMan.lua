@@ -180,9 +180,17 @@ end
 
 function Miner:down()
 if Miner:checkFuel() or Miner:checkInventory() then
-    Miner:returnToBase()
-    Miner:returnToMining()
-    Miner:down()
+    if Miner:checkFuel() then
+        if not Miner:checkInventoryForFuel() then
+            Miner:returnToBase()
+            print("No more fuel")
+        end
+    else
+        Miner:returnToBase()
+        Miner:putAway()
+        Miner:returnToMining()
+        Miner:down()
+    end
 else
     turtle.digDown()
     turtle.turnLeft()
@@ -204,35 +212,59 @@ function Miner:checkFuel()
 return turtle.getFuelLevel() < 250
 end
 
+
+-- Put all of the turtles contents into a chest
 function Miner:putAway()
+for i = 1, 16 do
+    turtle.select(i)
+    turtle.drop()
+end
+turtle.select(1)
+end
+
+-- Check turtles inventory for fuel
+function Miner:checkInventoryForFuel()
+for i = 1, 16 do
+    turtle.select(i)
+    if turtle.getItemCount(i) > 0 then
+        local isFuel, reason = turtle.refuel(0)
+        if isFuel then
+            turtle.refuel()
+            turtle.select(1)
+            return true
+        end
+    end
+end
+turtle.select(1)
+return false
 end
 
 -- Tells the turtle to keep mining until it hits the depth that is wanted. 
 function Miner:doQuarry()
-Miner:start()
-local rowsDone = 0
-while Miner.currentZ >= Miner.Depth do
-    Miner:forward()
-    rowsDone = rowsDone + 1
-    if rowsDone > Miner.Width then
-        if Miner.currentZ == Miner.Depth then
-            break
-        end
-        Miner:down()
-        rowsDone = 0
-        if Miner.MiningDirectionWest then
-            Miner.MiningDirectionWest = false
-            Miner.MiningDirectionEast = true
+    Miner:start()
+    local rowsDone = 0
+    while Miner.currentZ >= Miner.Depth do
+        Miner:forward()
+        rowsDone = rowsDone + 1
+        if rowsDone > Miner.Width then
+            if Miner.currentZ == Miner.Depth then
+                break
+            end
+            Miner:down()
+            rowsDone = 0
+            if Miner.MiningDirectionWest then
+                Miner.MiningDirectionWest = false
+                Miner.MiningDirectionEast = true
+            else
+                Miner.MiningDirectionWest = true
+                Miner.MiningDirectionEast = false
+            end
         else
-            Miner.MiningDirectionWest = true
-            Miner.MiningDirectionEast = false
+            Miner:turn()
         end
-    else
-        Miner:turn()
     end
-end
 
-Miner:returnToBase()
+    Miner:returnToBase()
 end
 
 print("What depth do you want (Bottom of the map is -64)? ")
@@ -246,4 +278,3 @@ local widthNum = tonumber(width)
 Miner["Width"] = widthNum - 1
 
 Miner:doQuarry()
-
