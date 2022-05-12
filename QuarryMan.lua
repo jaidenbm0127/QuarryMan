@@ -184,6 +184,7 @@ if Miner:checkFuel() or Miner:checkInventory() then
         if not Miner:checkInventoryForFuel() then
             Miner:returnToBase()
             print("No more fuel")
+            -- Maybe add function to wait for fuel then continue? 
         end
     else
         Miner:returnToBase()
@@ -241,30 +242,30 @@ end
 
 -- Tells the turtle to keep mining until it hits the depth that is wanted. 
 function Miner:doQuarry()
-    Miner:start()
-    local rowsDone = 0
-    while Miner.currentZ >= Miner.Depth do
-        Miner:forward()
-        rowsDone = rowsDone + 1
-        if rowsDone > Miner.Width then
-            if Miner.currentZ == Miner.Depth then
-                break
-            end
-            Miner:down()
-            rowsDone = 0
-            if Miner.MiningDirectionWest then
-                Miner.MiningDirectionWest = false
-                Miner.MiningDirectionEast = true
-            else
-                Miner.MiningDirectionWest = true
-                Miner.MiningDirectionEast = false
-            end
-        else
-            Miner:turn()
+Miner:start()
+local rowsDone = 0
+while Miner.currentZ >= Miner.Depth do
+    Miner:forward()
+    rowsDone = rowsDone + 1
+    if rowsDone > Miner.Width then
+        if Miner.currentZ == Miner.Depth then
+            break
         end
+        Miner:down()
+        rowsDone = 0
+        if Miner.MiningDirectionWest then
+            Miner.MiningDirectionWest = false
+            Miner.MiningDirectionEast = true
+        else
+            Miner.MiningDirectionWest = true
+            Miner.MiningDirectionEast = false
+        end
+    else
+        Miner:turn()
     end
+end
 
-    Miner:returnToBase()
+Miner:returnToBase()
 end
 
 print("What depth do you want (Bottom of the map is -64)? ")
