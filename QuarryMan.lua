@@ -147,15 +147,15 @@ if Miner.North then
                         Miner:returnToBase()
                         Miner:putAway()
                         Miner:returnToMining()
-                        Miner:down()
+                        Miner:forward()
                     else
-                        Miner:down()
+                        Miner:forward()
                     end
                 else
                     Miner:returnToBase()
                     Miner:putAway()
                     Miner:returnToMining()
-                    Miner:down()
+                    Miner:forward()
                 end
             end
         else
@@ -181,15 +181,15 @@ else
                         Miner:returnToBase()
                         Miner:putAway()
                         Miner:returnToMining()
-                        Miner:down()
+                        Miner:forward()
                     else
-                        Miner:down()
+                        Miner:forward()
                     end
                 else
                     Miner:returnToBase()
                     Miner:putAway()
                     Miner:returnToMining()
-                    Miner:down()
+                    Miner:forward()
                 end
             end
         else
@@ -219,15 +219,15 @@ if Miner.North and Miner.MiningDirectionWest then
                     Miner:returnToBase()
                     Miner:putAway()
                     Miner:returnToMining()
-                    Miner:down()
+                    Miner:turn()
                 else
-                    Miner:down()
+                    Miner:turn()
                 end
             else
                 Miner:returnToBase()
                 Miner:putAway()
                 Miner:returnToMining()
-                Miner:down()
+                Miner:turn()
             end
         end
     else
@@ -254,15 +254,15 @@ elseif Miner.North and Miner.MiningDirectionEast then
                     Miner:returnToBase()
                     Miner:putAway()
                     Miner:returnToMining()
-                    Miner:down()
+                    Miner:turn()
                 else
-                    Miner:down()
+                    Miner:turn()
                 end
             else
                 Miner:returnToBase()
                 Miner:putAway()
                 Miner:returnToMining()
-                Miner:down()
+                Miner:turn()
             end
         end
     else
@@ -289,15 +289,15 @@ elseif Miner.South and Miner.MiningDirectionWest then
                     Miner:returnToBase()
                     Miner:putAway()
                     Miner:returnToMining()
-                    Miner:down()
+                    Miner:turn()
                 else
-                    Miner:down()
+                    Miner:turn()
                 end
             else
                 Miner:returnToBase()
                 Miner:putAway()
                 Miner:returnToMining()
-                Miner:down()
+                Miner:turn()
             end
         end
     else
@@ -324,15 +324,15 @@ elseif Miner.South and Miner.MiningDirectionEast then
                     Miner:returnToBase()
                     Miner:putAway()
                     Miner:returnToMining()
-                    Miner:down()
+                    Miner:turn()
                 else
-                    Miner:down()
+                    Miner:turn()
                 end
             else
                 Miner:returnToBase()
                 Miner:putAway()
                 Miner:returnToMining()
-                Miner:down()
+                Miner:turn()
             end
         end
     else
@@ -482,4 +482,5 @@ Miner["DropJunk"] = false
 end
 
 Miner:doQuarry()
+
 
