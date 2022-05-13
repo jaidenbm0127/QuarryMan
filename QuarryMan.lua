@@ -75,17 +75,19 @@ end
 end
 
 function Miner:mergeStacks()
-for i = 1, 15 do
+for i = 1, 16 do
     local data1 = turtle.getItemDetail(i)
     local name1 = data1.name
     local spaceLeft = turtle.getItemSpace(i)
     if spaceLeft > 0 then
-        for j = i + 1, 16 do
-            local data2 = turtle.getItemDetail(j)
-            local name2 = data2.name
-            if name1 == name2 then
-                turtle.select(j)
-                turtle.transferTo(i)
+        for j = 1, 16 do
+            if j ~= i then
+                local data2 = turtle.getItemDetail(j)
+                local name2 = data2.name
+                if name1 == name2 then
+                    turtle.select(j)
+                    turtle.transferTo(i)
+                end
             end
         end
     end
@@ -423,6 +425,8 @@ Miner["DropJunk"] = false
 end
 
 Miner:doQuarry()
+
+
 
 
 
