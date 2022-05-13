@@ -44,11 +44,13 @@ local tuff = "minecraft:tuff"
 local dirt = "minecraft:dirt"
 
 for i = 1, 16 do
-    turtle.select(i)	
-    local data = turtle.getItemDetail()
+    turtle.select(i)
+    if turtle.getItemCount() > 0 then	
+        local data = turtle.getItemDetail()
 
-    if data.name == cobble or data.name == deepslate or data.name == tuff or data.name == dirt then
-        turtle.drop()
+        if data.name == cobble or data.name == deepslate or data.name == tuff or data.name == dirt then
+            turtle.drop()
+        end
     end
 end
 turtle.select(1)
