@@ -41,12 +41,13 @@ function Miner:tossJunk()
 local cobble = "minecraft:cobblestone"
 local deepslate = "minecraft:cobbled_deepslate"
 local tuff = "minecraft:tuff"
+local dirt = "minecraft:dirt"
 
 for i = 1, 16 do
     turtle.select(i)	
     local data = turtle.getItemDetail()
 
-    if data.name == cobble or data.name == deepslate or data.name == tuff then
+    if data.name == cobble or data.name == deepslate or data.name == tuff or data.name == dirt then
         turtle.drop()
     end
 end
@@ -390,7 +391,7 @@ end
 
 -- Checks to see if the miner is under a certain amount of fuel
 function Miner:checkFuel()
-return turtle.getFuelLevel() < (Miner.currentZ * -1 * 4)
+return turtle.getFuelLevel() < (((Miner.currentZ * -1) + (Miner.Width * 2)) * 2)
 end
 
 
