@@ -13,6 +13,30 @@ Miner = {
     currentZ = 0
     }
 
+function sleep (a) 
+local sec = tonumber(os.clock() + a); 
+while (os.clock() < sec) do 
+end 
+end
+
+function Miner:noMoreFuelProtocol()
+print("No more fuel")
+Miner:returnToBase()
+Miner:putAway()
+for i = 0, 1000000 do
+    sleep(1)
+    if Miner:checkInventoryForFuel() then
+        if not Miner:checkFuel() then 
+            break
+        end
+    end
+    if i == 999999 then
+        do return end
+    end
+end
+Miner:returnToMining()
+end
+
 -- Checks to see if the Miner has a full inventory.
 function Miner:checkInventory()
 local fullCount = 0
@@ -92,9 +116,19 @@ function Miner:forward()
 if Miner.North then
     while Miner.currentX < Miner.Width do
         if Miner:checkFuel() or Miner:checkInventory() then
-            Miner:returnToBase()
-            Miner:returnToMining()
-            Miner:forward()
+            if Miner:checkFuel() then
+                if not Miner:checkInventoryForFuel() then
+                    Miner:noMoreFuelProtocol()
+                    Miner:forward()
+                    
+                    -- Maybe add function to wait for fuel then continue? 
+                end
+            else
+                Miner:returnToBase()
+                Miner:putAway()
+                Miner:returnToMining()
+                Miner:forward()
+            end
         else
             turtle.dig()
             turtle.forward()
@@ -104,9 +138,19 @@ if Miner.North then
 else
     while Miner.currentX > 0 do
         if Miner:checkFuel() or Miner:checkInventory() then
-            Miner:returnToBase()
-            Miner:returnToMining()
-            Miner:forward()
+            if Miner:checkFuel() then
+                if not Miner:checkInventoryForFuel() then
+                    Miner:noMoreFuelProtocol()
+                    Miner:forward()
+                    
+                    -- Maybe add function to wait for fuel then continue? 
+                end
+            else
+                Miner:returnToBase()
+                Miner:putAway()
+                Miner:returnToMining()
+                Miner:forward()
+            end
         else
             turtle.dig()
             turtle.forward()
@@ -121,9 +165,18 @@ end
 function Miner:turn()
 if Miner.North and Miner.MiningDirectionWest then
     if Miner:checkFuel() or Miner:checkInventory() then
-        Miner:returnToBase()
-        Miner:returnToMining()
-        Miner:turn()
+        if Miner:checkFuel() then
+            if not Miner:checkInventoryForFuel() then
+                Miner:noMoreFuelProtocol()
+                Miner:turn()
+                -- Maybe add function to wait for fuel then continue? 
+            end
+        else
+            Miner:returnToBase()
+            Miner:putAway()
+            Miner:returnToMining()
+            Miner:turn()
+        end
     else
         turtle.turnLeft()
         turtle.dig()
@@ -135,9 +188,18 @@ if Miner.North and Miner.MiningDirectionWest then
     end
 elseif Miner.North and Miner.MiningDirectionEast then
     if Miner:checkFuel() or Miner:checkInventory() then
-        Miner:returnToBase()
-        Miner:returnToMining()
-        Miner:turn()
+        if Miner:checkFuel() then
+            if not Miner:checkInventoryForFuel() then
+                Miner:noMoreFuelProtocol()
+                Miner:turn()
+                -- Maybe add function to wait for fuel then continue? 
+            end
+        else
+            Miner:returnToBase()
+            Miner:putAway()
+            Miner:returnToMining()
+            Miner:turn()
+        end
     else
         turtle.turnRight()
         turtle.dig()
@@ -149,9 +211,18 @@ elseif Miner.North and Miner.MiningDirectionEast then
     end
 elseif Miner.South and Miner.MiningDirectionWest then
     if Miner:checkFuel() or Miner:checkInventory() then
-        Miner:returnToBase()
-        Miner:returnToMining()
-        Miner:turn()
+        if Miner:checkFuel() then
+            if not Miner:checkInventoryForFuel() then
+                Miner:noMoreFuelProtocol()
+                Miner:turn()
+                -- Maybe add function to wait for fuel then continue? 
+            end
+        else
+            Miner:returnToBase()
+            Miner:putAway()
+            Miner:returnToMining()
+            Miner:turn()
+        end
     else
         turtle.turnRight()
         turtle.dig()
@@ -163,9 +234,18 @@ elseif Miner.South and Miner.MiningDirectionWest then
     end
 elseif Miner.South and Miner.MiningDirectionEast then
     if Miner:checkFuel() or Miner:checkInventory() then
-        Miner:returnToBase()
-        Miner:returnToMining()
-        Miner:turn()
+        if Miner:checkFuel() then
+            if not Miner:checkInventoryForFuel() then
+                Miner:noMoreFuelProtocol()
+                Miner:turn()
+                -- Maybe add function to wait for fuel then continue? 
+            end
+        else
+            Miner:returnToBase()
+            Miner:putAway()
+            Miner:returnToMining()
+            Miner:turn()
+        end
     else
         turtle.turnLeft()
         turtle.dig()
@@ -182,8 +262,8 @@ function Miner:down()
 if Miner:checkFuel() or Miner:checkInventory() then
     if Miner:checkFuel() then
         if not Miner:checkInventoryForFuel() then
-            Miner:returnToBase()
-            print("No more fuel")
+            Miner:noMoreFuelProtocol()
+            Miner:down()
             -- Maybe add function to wait for fuel then continue? 
         end
     else
@@ -210,8 +290,9 @@ end
 
 -- Checks to see if the miner is under a certain amount of fuel
 function Miner:checkFuel()
-return turtle.getFuelLevel() < 250
+return turtle.getFuelLevel() < (Miner.currentZ * -1 * 4)
 end
+
 
 
 -- Put all of the turtles contents into a chest
@@ -245,6 +326,10 @@ function Miner:doQuarry()
 Miner:start()
 local rowsDone = 0
 while Miner.currentZ >= Miner.Depth do
+    local x, y, z = gps.locate()
+    if y == -59 then
+        break
+    end
     Miner:forward()
     rowsDone = rowsDone + 1
     if rowsDone > Miner.Width then
@@ -265,13 +350,22 @@ while Miner.currentZ >= Miner.Depth do
     end
 end
 
+print("Miner done, returning to base.")
 Miner:returnToBase()
 end
 
-print("What depth do you want (Bottom of the map is -64)? ")
+print("What depth do you want? (Bottom of the map is -64. Leave blank if you want to go until bedrock) ")
 local depth = io.read()
-local depthNum = tonumber(depth)
-Miner["Depth"] = depthNum * -1
+local depthNum
+if depth == "" then
+depthNum = -999
+
+else
+depthNum = tonumber(depth)
+depthNum = depthNum * -1
+end
+
+Miner["Depth"] = depthNum
 
 print("What dimensions (square)? ")
 local width = io.read()
@@ -279,3 +373,4 @@ local widthNum = tonumber(width)
 Miner["Width"] = widthNum - 1
 
 Miner:doQuarry()
+
