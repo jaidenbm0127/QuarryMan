@@ -14,7 +14,7 @@ Miner = {
     }
 
 function sleep (a) 
-local sec = tonumber(os.clock() + a); 
+local sec = tonumber(os.clock() + a)
 while (os.clock() < sec) do 
 end 
 end
@@ -49,6 +49,45 @@ for i = 1, 16 do
 
     if data.name == cobble or data.name == deepslate or data.name == tuff or data.name == dirt then
         turtle.drop()
+    end
+end
+turtle.select(1)
+end
+
+function Miner:manageInventory()
+
+Miner:mergeStacks()
+
+if Miner.DropJunk then
+    Miner:tossJunk()
+    if Miner:checkInventory() then 
+        Miner:returnToBase()
+        Miner:putAway()
+        Miner:returnToMining()
+    end
+else
+    if Miner:checkInventory() then
+        Miner:returnToBase()
+        Miner:putAway()
+        Miner:returnToMining()
+    end
+end
+end
+
+function Miner:mergeStacks()
+for i = 1, 15 do
+    local data1 = turtle.getItemDetail(i)
+    local name1 = data1.name
+    local spaceLeft = turtle.getItemSpace(i)
+    if spaceLeft > 0 then
+        for j = i + 1, 16 do
+            local data2 = turtle.getItemDetail(j)
+            local name2 = data2.name
+            if name1 == name2 then
+                turtle.select(j)
+                turtle.transferTo(i)
+            end
+        end
     end
 end
 turtle.select(1)
@@ -141,22 +180,8 @@ if Miner.North then
                     -- Maybe add function to wait for fuel then continue? 
                 end
             else
-                if Miner.DropJunk then
-                    Miner:tossJunk()
-                    if Miner:checkInventory() then 
-                        Miner:returnToBase()
-                        Miner:putAway()
-                        Miner:returnToMining()
-                        Miner:forward()
-                    else
-                        Miner:forward()
-                    end
-                else
-                    Miner:returnToBase()
-                    Miner:putAway()
-                    Miner:returnToMining()
-                    Miner:forward()
-                end
+                Miner:manageInventory()
+                Miner:forward()
             end
         else
             turtle.dig()
@@ -175,22 +200,8 @@ else
                     -- Maybe add function to wait for fuel then continue? 
                 end
             else
-                if Miner.DropJunk then
-                    Miner:tossJunk()
-                    if Miner:checkInventory() then 
-                        Miner:returnToBase()
-                        Miner:putAway()
-                        Miner:returnToMining()
-                        Miner:forward()
-                    else
-                        Miner:forward()
-                    end
-                else
-                    Miner:returnToBase()
-                    Miner:putAway()
-                    Miner:returnToMining()
-                    Miner:forward()
-                end
+                Miner:manageInventory()
+                Miner:forward()
             end
         else
             turtle.dig()
@@ -213,22 +224,8 @@ if Miner.North and Miner.MiningDirectionWest then
                 -- Maybe add function to wait for fuel then continue? 
             end
         else
-            if Miner.DropJunk then
-                Miner:tossJunk()
-                if Miner:checkInventory() then 
-                    Miner:returnToBase()
-                    Miner:putAway()
-                    Miner:returnToMining()
-                    Miner:turn()
-                else
-                    Miner:turn()
-                end
-            else
-                Miner:returnToBase()
-                Miner:putAway()
-                Miner:returnToMining()
-                Miner:turn()
-            end
+            Miner:manageInventory()
+            Miner:turn()
         end
     else
         turtle.turnLeft()
@@ -248,22 +245,8 @@ elseif Miner.North and Miner.MiningDirectionEast then
                 -- Maybe add function to wait for fuel then continue? 
             end
         else
-            if Miner.DropJunk then
-                Miner:tossJunk()
-                if Miner:checkInventory() then 
-                    Miner:returnToBase()
-                    Miner:putAway()
-                    Miner:returnToMining()
-                    Miner:turn()
-                else
-                    Miner:turn()
-                end
-            else
-                Miner:returnToBase()
-                Miner:putAway()
-                Miner:returnToMining()
-                Miner:turn()
-            end
+            Miner:manageInventory()
+            Miner:turn()
         end
     else
         turtle.turnRight()
@@ -283,22 +266,8 @@ elseif Miner.South and Miner.MiningDirectionWest then
                 -- Maybe add function to wait for fuel then continue? 
             end
         else
-            if Miner.DropJunk then
-                Miner:tossJunk()
-                if Miner:checkInventory() then 
-                    Miner:returnToBase()
-                    Miner:putAway()
-                    Miner:returnToMining()
-                    Miner:turn()
-                else
-                    Miner:turn()
-                end
-            else
-                Miner:returnToBase()
-                Miner:putAway()
-                Miner:returnToMining()
-                Miner:turn()
-            end
+            Miner:manageInventory()
+            Miner:turn()
         end
     else
         turtle.turnRight()
@@ -318,22 +287,8 @@ elseif Miner.South and Miner.MiningDirectionEast then
                 -- Maybe add function to wait for fuel then continue? 
             end
         else
-            if Miner.DropJunk then
-                Miner:tossJunk()
-                if Miner:checkInventory() then 
-                    Miner:returnToBase()
-                    Miner:putAway()
-                    Miner:returnToMining()
-                    Miner:turn()
-                else
-                    Miner:turn()
-                end
-            else
-                Miner:returnToBase()
-                Miner:putAway()
-                Miner:returnToMining()
-                Miner:turn()
-            end
+            Miner:manageInventory()
+            Miner:turn()
         end
     else
         turtle.turnLeft()
@@ -356,22 +311,8 @@ if Miner:checkFuel() or Miner:checkInventory() then
             -- Maybe add function to wait for fuel then continue? 
         end
     else    
-        if Miner.DropJunk then
-            Miner:tossJunk()
-            if Miner:checkInventory() then 
-                Miner:returnToBase()
-                Miner:putAway()
-                Miner:returnToMining()
-                Miner:down()
-            else
-                Miner:down()
-            end
-        else
-            Miner:returnToBase()
-            Miner:putAway()
-            Miner:returnToMining()
-            Miner:down()
-        end
+        Miner:manageInventory()
+        Miner:down()
     end
 else
     turtle.digDown()
@@ -385,8 +326,8 @@ else
         Miner.North = true
         Miner.South = false
     end
+    Miner.currentZ = Miner.currentZ - 1
 end
-Miner.currentZ = Miner.currentZ - 1
 end
 
 -- Checks to see if the miner is under a certain amount of fuel
@@ -482,5 +423,6 @@ Miner["DropJunk"] = false
 end
 
 Miner:doQuarry()
+
 
 
