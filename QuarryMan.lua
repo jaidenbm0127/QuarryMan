@@ -10,16 +10,17 @@ Miner = {
     -- Internal coordinate system to help navigate back to chest.
     currentX = 0,
     currentY = 0,
-    currentZ = 0,
-
+    currentZ = 0
     }
 
+-- Basic sleep function I got off Stack Overflow :p
 function sleep (a) 
 local sec = tonumber(os.clock() + a)
 while (os.clock() < sec) do 
 end 
 end
 
+-- If the turtle has no more fuel, and it cant find any fuel in its inventory, it will go back to the chest and wait for fuel.
 function Miner:noMoreFuelProtocol()
 print("No more fuel")
 Miner:returnToBase()
@@ -38,6 +39,7 @@ end
 Miner:returnToMining()
 end
 
+-- Self explanatory
 function Miner:checkSlotsAvailable()
 local slotsTaken = 0
 
@@ -50,6 +52,7 @@ end
 return slotsTaken
 end
 
+-- Loops through inventory to get rid of anything deemed as "junk" (can probably make this more efficient so it doesnt have to be hardcoded)
 function Miner:tossJunk()
 local cobble = "minecraft:cobblestone"
 local deepslate = "minecraft:cobbled_deepslate"
@@ -69,6 +72,8 @@ end
 turtle.select(1)
 end
 
+-- Function to help compartmentalize a few things. Basically merges any stacks in the inventory, drops junk if applicable, and returns to base
+-- to drop off items and return to mining
 function Miner:manageInventory()
 
 Miner:mergeStacks()
@@ -88,6 +93,7 @@ else
 end
 end
 
+-- Will merge stacks of items if there is an item occupying two slots that is less than its max capacity
 function Miner:mergeStacks()
 for i = 1, 16 do
     if turtle.getItemCount(i) > 0 then
@@ -198,8 +204,6 @@ if Miner.North then
                 if not Miner:checkInventoryForFuel() then
                     Miner:noMoreFuelProtocol()
                     Miner:forward()
-                    
-                    -- Maybe add function to wait for fuel then continue? 
                 end
             else
                 Miner:manageInventory()
@@ -218,8 +222,6 @@ else
                 if not Miner:checkInventoryForFuel() then
                     Miner:noMoreFuelProtocol()
                     Miner:forward()
-                    
-                    -- Maybe add function to wait for fuel then continue? 
                 end
             else
                 Miner:manageInventory()
@@ -243,7 +245,6 @@ if Miner.North and Miner.MiningDirectionWest then
             if not Miner:checkInventoryForFuel() then
                 Miner:noMoreFuelProtocol()
                 Miner:turn()
-                -- Maybe add function to wait for fuel then continue? 
             end
         else
             Miner:manageInventory()
@@ -264,7 +265,6 @@ elseif Miner.North and Miner.MiningDirectionEast then
             if not Miner:checkInventoryForFuel() then
                 Miner:noMoreFuelProtocol()
                 Miner:turn()
-                -- Maybe add function to wait for fuel then continue? 
             end
         else
             Miner:manageInventory()
@@ -285,7 +285,6 @@ elseif Miner.South and Miner.MiningDirectionWest then
             if not Miner:checkInventoryForFuel() then
                 Miner:noMoreFuelProtocol()
                 Miner:turn()
-                -- Maybe add function to wait for fuel then continue? 
             end
         else
             Miner:manageInventory()
@@ -306,7 +305,6 @@ elseif Miner.South and Miner.MiningDirectionEast then
             if not Miner:checkInventoryForFuel() then
                 Miner:noMoreFuelProtocol()
                 Miner:turn()
-                -- Maybe add function to wait for fuel then continue? 
             end
         else
             Miner:manageInventory()
@@ -330,7 +328,6 @@ if Miner:checkFuel() or Miner:checkInventory() then
         if not Miner:checkInventoryForFuel() then
             Miner:noMoreFuelProtocol()
             Miner:down()
-            -- Maybe add function to wait for fuel then continue? 
         end
     else   
         Miner:manageInventory()
@@ -390,9 +387,11 @@ function Miner:doQuarry()
 Miner:start()
 local rowsDone = 0
 while Miner.currentZ >= Miner.Depth do
-    local x, y, z = gps.locate()
-    if y == -59 then
-        break
+    local success, data = turtle.inspectDown()
+    if success then
+        if data.name == "minecraft:bedrock" then
+            break
+        end 
     end
     Miner:forward()
     rowsDone = rowsDone + 1
@@ -416,6 +415,7 @@ end
 
 print("Miner done, returning to base.")
 Miner:returnToBase()
+Miner:putAway()
 end
 
 print("What depth do you want? (Bottom of the map is -64. Leave blank if you want to go until bedrock) ")
