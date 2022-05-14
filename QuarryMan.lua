@@ -187,6 +187,7 @@ end
 
 -- Goes forward [specified width] blocks.
 function Miner:forward()
+print(Miner.loop)
 if Miner.North then
     while Miner.currentX < Miner.Width do
         if Miner:checkFuel() or Miner:checkInventory() then
@@ -237,6 +238,7 @@ end
 
 -- Overly intricate method to turn based on which way the Turtle is facing and which way its mining.
 function Miner:turn()
+print(Miner.loop)
 if Miner.North and Miner.MiningDirectionWest then
     if Miner:checkFuel() or Miner:checkInventory() then
         if Miner:checkFuel() then
@@ -333,6 +335,7 @@ end
 end
 
 function Miner:down()
+print(Miner.loop)
 if Miner:checkFuel() or Miner:checkInventory() then
     if Miner:checkFuel() then
         if not Miner:checkInventoryForFuel() then
@@ -455,4 +458,5 @@ Miner["DropJunk"] = false
 end
 
 Miner:doQuarry()
+
 
