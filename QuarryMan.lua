@@ -12,7 +12,6 @@ Miner = {
     currentY = 0,
     currentZ = 0,
 
-    loop = 0
     }
 
 function sleep (a) 
@@ -39,6 +38,18 @@ end
 Miner:returnToMining()
 end
 
+function Miner:checkSlotsAvailable()
+local slotsTaken = 0
+
+for i = 1, 16 do
+    if turtle.getItemCount(i) > 0 then
+        slotsTaken = slotsTaken + 1
+    end
+end
+
+return slotsTaken
+end
+
 function Miner:tossJunk()
 local cobble = "minecraft:cobblestone"
 local deepslate = "minecraft:cobbled_deepslate"
@@ -60,26 +71,19 @@ end
 
 function Miner:manageInventory()
 
-if Miner.loop == 3 then
-    Miner:returnToBase()
-    Miner:putAway()
-    Miner:returnToMining()
-    Miner.loop = 0
+Miner:mergeStacks()
+if Miner.DropJunk then
+    Miner:tossJunk()
+    if Miner:checkSlotsAvailable() == 15 then
+        Miner:returnToBase()
+        Miner:putAway()
+        Miner:returnToMining()
+    end
 else
-    Miner:mergeStacks()
-    if Miner.DropJunk then
-        Miner:tossJunk()
-        if Miner:checkInventory() then
-            Miner:returnToBase()
-            Miner:putAway()
-            Miner:returnToMining()
-        end
-    else
-        if Miner:checkInventory() then
-            Miner:returnToBase()
-            Miner:putAway()
-            Miner:returnToMining()
-        end
+    if Miner:checkInventory() then
+        Miner:returnToBase()
+        Miner:putAway()
+        Miner:returnToMining()
     end
 end
 end
@@ -187,7 +191,6 @@ end
 
 -- Goes forward [specified width] blocks.
 function Miner:forward()
-print(Miner.loop)
 if Miner.North then
     while Miner.currentX < Miner.Width do
         if Miner:checkFuel() or Miner:checkInventory() then
@@ -199,12 +202,10 @@ if Miner.North then
                     -- Maybe add function to wait for fuel then continue? 
                 end
             else
-                Miner.loop = Miner.loop + 1
                 Miner:manageInventory()
                 Miner:forward()
             end
         else
-            Miner.loop = 0
             turtle.dig()
             turtle.forward()
             Miner.currentX = Miner.currentX + 1
@@ -221,12 +222,10 @@ else
                     -- Maybe add function to wait for fuel then continue? 
                 end
             else
-                Miner.loop = Miner.loop + 1
                 Miner:manageInventory()
                 Miner:forward()
             end
         else
-            Miner.loop = 0
             turtle.dig()
             turtle.forward()
             Miner.currentX = Miner.currentX - 1
@@ -238,7 +237,6 @@ end
 
 -- Overly intricate method to turn based on which way the Turtle is facing and which way its mining.
 function Miner:turn()
-print(Miner.loop)
 if Miner.North and Miner.MiningDirectionWest then
     if Miner:checkFuel() or Miner:checkInventory() then
         if Miner:checkFuel() then
@@ -248,12 +246,10 @@ if Miner.North and Miner.MiningDirectionWest then
                 -- Maybe add function to wait for fuel then continue? 
             end
         else
-            Miner.loop = Miner.loop + 1
             Miner:manageInventory()
             Miner:turn()
         end
     else
-        Miner.loop = 0
         turtle.turnLeft()
         turtle.dig()
         turtle.forward()
@@ -271,12 +267,10 @@ elseif Miner.North and Miner.MiningDirectionEast then
                 -- Maybe add function to wait for fuel then continue? 
             end
         else
-            Miner.loop = Miner.loop + 1
             Miner:manageInventory()
             Miner:turn()
         end
     else
-        Miner.loop = 0
         turtle.turnRight()
         turtle.dig()
         turtle.forward()
@@ -294,12 +288,10 @@ elseif Miner.South and Miner.MiningDirectionWest then
                 -- Maybe add function to wait for fuel then continue? 
             end
         else
-            Miner.loop = Miner.loop + 1
             Miner:manageInventory()
             Miner:turn()
         end
     else
-        Miner.loop = 0
         turtle.turnRight()
         turtle.dig()
         turtle.forward()
@@ -317,12 +309,10 @@ elseif Miner.South and Miner.MiningDirectionEast then
                 -- Maybe add function to wait for fuel then continue? 
             end
         else
-            Miner.loop = Miner.loop + 1
             Miner:manageInventory()
             Miner:turn()
         end
     else
-        Miner.loop = 0
         turtle.turnLeft()
         turtle.dig()
         turtle.forward()
@@ -335,7 +325,6 @@ end
 end
 
 function Miner:down()
-print(Miner.loop)
 if Miner:checkFuel() or Miner:checkInventory() then
     if Miner:checkFuel() then
         if not Miner:checkInventoryForFuel() then
@@ -344,12 +333,10 @@ if Miner:checkFuel() or Miner:checkInventory() then
             -- Maybe add function to wait for fuel then continue? 
         end
     else   
-        Miner.loop = Miner.loop + 1
         Miner:manageInventory()
         Miner:down()
     end
 else
-    Miner.loop = 0
     turtle.digDown()
     turtle.turnLeft()
     turtle.turnLeft()
@@ -458,5 +445,4 @@ Miner["DropJunk"] = false
 end
 
 Miner:doQuarry()
-
 
