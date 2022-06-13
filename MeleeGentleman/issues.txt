@@ -1,0 +1,2 @@
+1. When starting new turtle, will immediately run out of fuel and cause issues.
+2. Maybe make it to where it will not put away coal/charcoal so it stays fuel.
