@@ -58,13 +58,14 @@ function Miner:tossJunk()
     local deepslate = "minecraft:cobbled_deepslate"
     local tuff = "minecraft:tuff"
     local dirt = "minecraft:dirt"
+    local granite = "minecraft:granite"
 
     for i = 1, 16 do
         turtle.select(i)
         if turtle.getItemCount() > 0 then
             local data = turtle.getItemDetail()
 
-            if data.name == cobble or data.name == deepslate or data.name == tuff or data.name == dirt then
+            if data.name == cobble or data.name == deepslate or data.name == tuff or data.name == dirt or data.name == granite then
                 turtle.drop()
             end
         end
@@ -141,6 +142,10 @@ end
 -- Using the point (0, 0, 0) as its starting point, navigates from its current (X, Y, Z) to (0, 0, 0)
 function Miner:returnToBase()
     for z = Miner.currentZ, -1 do
+        local success, data = turtle.inspectUp()
+        if success then
+            turtle.digUp()
+        end
         turtle.up()
     end
 
@@ -151,12 +156,20 @@ function Miner:returnToBase()
     end
 
     for y = Miner.currentY, 1, -1 do
+        local success, data = turtle.inspectUp()
+        if success then
+            turtle.dig()
+        end
         turtle.forward()
     end
 
     turtle.turnRight()
 
     for x = Miner.currentX, 1, -1 do
+        local success, data = turtle.inspectUp()
+        if success then
+            turtle.dig()
+        end
         turtle.forward()
     end
 end
@@ -167,12 +180,20 @@ function Miner:returnToMining()
     turtle.turnRight()
 
     for i = 1, Miner.currentX do
+        local success, data = turtle.inspectUp()
+        if success then
+            turtle.dig()
+        end
         turtle.forward()
     end
 
     turtle.turnLeft()
 
     for i = 1, Miner.currentY do
+        local success, data = turtle.inspectUp()
+        if success then
+            turtle.dig()
+        end
         turtle.forward()
     end
 
@@ -183,6 +204,10 @@ function Miner:returnToMining()
     end
 
     for i = 1, Miner.currentZ, -1 do
+        local success, data = turtle.inspectUp()
+        if success then
+            turtle.digDown()
+        end
         turtle.down()
     end
 
@@ -329,7 +354,7 @@ function Miner:down()
                 Miner:noMoreFuelProtocol()
                 Miner:down()
             end
-        else   
+        else
             Miner:manageInventory()
             Miner:down()
         end
@@ -358,9 +383,20 @@ end
 
 -- Put all of the turtles contents into a chest
 function Miner:putAway()
+    local coal = "minecraft:coal"
+    local coalBlock = "minecraft:coal_block"
+    local charcoal = "minecraft:charcoal"
+    local charcoalBlock = "minecraft:charcoal_block"
     for i = 1, 16 do
         turtle.select(i)
-        turtle.drop()
+        if turtle.getItemCount() > 0 then
+            local data = turtle.getItemDetail()
+
+            if data.name == coal or data.name == coalBlock or data.name == charcoal or data.name == charcoalBlock then
+            else
+                turtle.drop()
+            end
+        end
     end
     turtle.select(1)
 end
@@ -382,8 +418,11 @@ function Miner:checkInventoryForFuel()
     return false
 end
 
--- Tells the turtle to keep mining until it hits the depth that is wanted. 
+-- Tells the turtle to keep mining until it hits the depth that is wanted.
 function Miner:doQuarry()
+    if Miner:checkFuel() then 
+        Miner:noMoreFuelProtocol()
+    end
     Miner:start()
     local rowsDone = 0
     while Miner.currentZ >= Miner.Depth do
@@ -391,7 +430,7 @@ function Miner:doQuarry()
         if success then
             if data.name == "minecraft:bedrock" then
                 break
-            end 
+            end
         end
         Miner:forward()
         rowsDone = rowsDone + 1
@@ -415,6 +454,7 @@ function Miner:doQuarry()
 
     print("Miner done, returning to base.")
     Miner:returnToBase()
+    Miner:tossJunk()
     Miner:putAway()
 end
 
