@@ -156,7 +156,7 @@ function Miner:returnToBase()
     end
 
     for y = Miner.currentY, 1, -1 do
-        local success, data = turtle.inspectUp()
+        local success, data = turtle.inspect()
         if success then
             turtle.dig()
         end
@@ -166,7 +166,7 @@ function Miner:returnToBase()
     turtle.turnRight()
 
     for x = Miner.currentX, 1, -1 do
-        local success, data = turtle.inspectUp()
+        local success, data = turtle.inspect()
         if success then
             turtle.dig()
         end
@@ -180,7 +180,7 @@ function Miner:returnToMining()
     turtle.turnRight()
 
     for i = 1, Miner.currentX do
-        local success, data = turtle.inspectUp()
+        local success, data = turtle.inspect()
         if success then
             turtle.dig()
         end
@@ -190,7 +190,7 @@ function Miner:returnToMining()
     turtle.turnLeft()
 
     for i = 1, Miner.currentY do
-        local success, data = turtle.inspectUp()
+        local success, data = turtle.inspect()
         if success then
             turtle.dig()
         end
@@ -204,7 +204,7 @@ function Miner:returnToMining()
     end
 
     for i = 1, Miner.currentZ, -1 do
-        local success, data = turtle.inspectUp()
+        local success, data = turtle.inspectDown()
         if success then
             turtle.digDown()
         end
