@@ -1,2 +1,1 @@
-1. When starting new turtle, will immediately run out of fuel and cause issues.
-2. The blocks in a line from the starting point need to be cleared so that it can go up to the chest. If its blocked above itself on the ascent it wont go all the way up enoguh to get to the same level as the chest. 
+1. The blocks in a line from the starting point need to be cleared so that it can go up to the chest. If its blocked above itself on the ascent it wont go all the way up enoguh to get to the same level as the chest. 
