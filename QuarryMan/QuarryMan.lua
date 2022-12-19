@@ -58,14 +58,14 @@ function Miner:tossJunk()
     local deepslate = "minecraft:cobbled_deepslate"
     local tuff = "minecraft:tuff"
     local dirt = "minecraft:dirt"
-    local granite = "minecraft:granite"
+    local ochrum = "create:ochrum"
 
     for i = 1, 16 do
         turtle.select(i)
         if turtle.getItemCount() > 0 then
             local data = turtle.getItemDetail()
 
-            if data.name == cobble or data.name == deepslate or data.name == tuff or data.name == dirt or data.name == granite then
+            if data.name == cobble or data.name == deepslate or data.name == tuff or data.name == dirt or data.name == ochrum then
                 turtle.drop()
             end
         end
@@ -423,22 +423,25 @@ function Miner:doQuarry()
     if Miner:checkFuel() then 
         for i = 1, 1000000 do
             sleep(1)
-            Miner:checkInventoryForFuel()
+            if Miner:checkInventoryForFuel() then
+                break
+            end
         end
     end
     Miner:start()
     local rowsDone = 0
+    local lastRun = false
     while Miner.currentZ >= Miner.Depth do
         local success, data = turtle.inspectDown()
         if success then
             if data.name == "minecraft:bedrock" then
-                break
+                lastRun = true
             end
         end
         Miner:forward()
         rowsDone = rowsDone + 1
         if rowsDone > Miner.Width then
-            if Miner.currentZ == Miner.Depth then
+            if lastRun or Miner.currentZ == Miner.Depth then
                 break
             end
             Miner:down()
