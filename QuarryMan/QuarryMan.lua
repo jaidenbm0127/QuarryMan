@@ -421,7 +421,10 @@ end
 -- Tells the turtle to keep mining until it hits the depth that is wanted.
 function Miner:doQuarry()
     if Miner:checkFuel() then 
-        Miner:noMoreFuelProtocol()
+        for i = 1, 1000000 do
+            sleep(1)
+            Miner:checkInventoryForFuel()
+        end
     end
     Miner:start()
     local rowsDone = 0
@@ -453,8 +456,8 @@ function Miner:doQuarry()
     end
 
     print("Miner done, returning to base.")
-    Miner:returnToBase()
     Miner:tossJunk()
+    Miner:returnToBase()
     Miner:putAway()
 end
 
