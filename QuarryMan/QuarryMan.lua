@@ -203,7 +203,7 @@ function Miner:returnToMining()
         turtle.turnLeft()
     end
 
-    for i = 1, Miner.currentZ, 1 do
+    for z = Miner.currentZ, -1,  do
         local success, data = turtle.inspectDown()
         if success then
             turtle.digDown()
